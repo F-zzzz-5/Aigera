@@ -1,53 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Midnight Reveal</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        /* Optional: Add any custom CSS here if needed, but Tailwind should cover most things */
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine Stories</title>
+
+  <!-- TailwindCSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* Character fade-in style (initial pink, then black) */
+    .fade-in-char {
+      color: #ff69b4; /* hot pink */
+      transition: color 0.7s ease; /* controls how fast to fade to black */
+    }
+
+    /* For story images to fade from 0% opacity to 100% */
+    .fade-in-image {
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    /* The story "play" button styling - fixed at bottom middle */
+    #playButton {
+      position: fixed;
+      bottom: 40px; /* adjust as needed */
+      left: 50%;
+      transform: translateX(-50%);
+      display: none; /* hidden until a story finishes */
+      z-index: 100;  /* ensure it’s above other elements if needed */
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center h-screen font-sans">
+<body class="bg-gray-100 font-sans min-h-screen">
 
-    <div id="countdown-container" class="text-center">
-        <h1 class="text-3xl font-bold mb-4">Countdown to Midnight</h1>
-        <div id="countdown" class="text-5xl font-extrabold text-blue-600"></div>
+  <!-- **************************
+       1) INITIAL VALENTINE MESSAGE
+       ************************** -->
+  <div
+    id="initial-section"
+    class="flex flex-col items-center justify-center h-screen text-center"
+  >
+    <div id="message-container" class="text-3xl font-bold mb-8"></div>
+
+    <!-- "YES" buttons (hidden initially; will be revealed after message finishes) -->
+    <div
+      id="yesButtonsContainer"
+      class="hidden text-center space-x-4"
+    >
+      <button
+        id="yesButton1"
+        class="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full"
+      >
+        YES
+      </button>
+      <button
+        id="yesButton2"
+        class="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full"
+      >
+        YES
+      </button>
     </div>
+  </div>
 
-    <div id="button-container" class="hidden mt-8">
-        <button id="special-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full">
-            🎉 Reveal Special Button! 🎉
-        </button>
+  <!-- **************************
+       2) STORIES SECTION 
+       (initially hidden, scrollable by default)
+       ************************** -->
+  <div
+    id="stories-section"
+    class="hidden w-full max-w-3xl mx-auto px-4 py-8 space-y-12"
+  >
+    <!-- Each story displayed here dynamically -->
+    <div id="story-container" class="text-center space-y-6">
+      <!-- We’ll inject the story title, text, and image here -->
+      <h2 id="story-title" class="text-3xl font-bold"></h2>
+      <div id="story-text" class="text-xl"></div>
+      <img
+        id="story-image"
+        src=""
+        alt=""
+        class="mx-auto fade-in-image"
+        style="max-width: 400px;"
+      />
     </div>
+  </div>
 
-    <script>
-        function updateCountdown() {
-            const now = new Date();
-            const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0); // Set to next midnight
+  <!-- **************************
+       3) PLAY BUTTON for stories
+       ************************** -->
+  <button
+    id="playButton"
+    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full"
+  >
+    Continue
+  </button>
 
-            let timeDifference = midnight.getTime() - now.getTime();
+  <!-- **************************
+       4) COUNTDOWN SECTION (hidden until stories complete)
+       ************************** -->
+  <div id="countdown-section" class="hidden w-full text-center py-8">
+    <h1 class="text-3xl font-bold mb-4 text-red-600">Countdown to Midnight</h1>
+    <div id="countdown" class="text-5xl font-extrabold text-red-600"></div>
+  </div>
 
-            if (timeDifference <= 0) {
-                // Midnight has passed, or it is already midnight
-                document.getElementById('countdown-container').classList.add('hidden');
-                document.getElementById('button-container').classList.remove('hidden');
-                clearInterval(countdownInterval); // Stop the countdown
-                document.getElementById('countdown').innerText = "Midnight!"; // Optional: Display "Midnight!"
-                return; // Exit function to prevent negative countdown
-            }
+  <script>
+    /********************************************
+     * 0) INLINE STORIES JSON-LIKE DATA         *
+     ********************************************/
+    // Instead of fetch, we can just store the stories directly in an array:
+    const storiesData = [
+      {
+        "title": "The Start",
+        "text": "Voyage Belek, Golf and Spa... Ngl meeting here seems like an unexpected fortune that only happens in romance films. Oh yea, you never came to my room so take a look at it below.",
+        "image": "https://voyagecdn.blob.core.windows.net/mediafiles/VBE/617X537/617x537_A_Block_Standard_Room_Land_View_1.jpg"
+      },
+      {
+        "title": "Our First Interaction",
+        "text": "From my perspective, I noticed an instant physical chemistry between us, the way you acted around me and looked at me. I wanted you from the start, your feminine energy was radiating throughout the whole resort, pulling me in way more than anyone else.",
+        "image": "https://media.discordapp.net/attachments/1339586632181092386/1339587276962922507/IMG_2222.jpg?ex=67af435f&is=67adf1df&hm=f83b787184ae4113b70c3e9bae137bbc05c5b5d220d472155872a62971e95acd&=&format=webp&width=789&height=1051"
+      },
+      {
+        "title": "Getting To Know You",
+        "text": "Getting to know you has been one of the most interesting personal exploration experiences I've ever had. First, we bonded on the joint desire to engage in deep thought provoking conversations; \"eXpLaIn tHe FoUrTh DiMeNsIoN\"",
+        "image": "https://via.placeholder.com/400x300?text=Third+Story"
+      },
+      {
+        "title": "Thailand",
+        "text": "Thailand was the first time we spent a prolonged period of time together, and I knew from the start it would work out perfectly. I loved every moment of that holiday with you, from arriving at each villa, to riding the motorbikes, to the NYE party and much more.",
+        "image": "https://cdn.discordapp.com/attachments/1339586632181092386/1339588395990519900/81cbbc4b-6c60-487c-89c3-1ba566c140d1.mov?ex=67af4469&is=67adf2e9&hm=e8d79d6f4b49e448377e854bf29d7a73df78607053b5a00fcd8393c2ec9213a6&"
+      },
+      {
+        "title": "Today",
+        "text": "Today I'd like to clarify a few things;\n1. I love your cooking\n2. I love you.\n3. No other woman comes above you.\n4. You will always be my princess.\n5. Yes I appreciate every one of your gifts; The bunny, the drawings, the presentations, the flowers for my mother, the game ideas.\n6. Our son and daughter will be called Tristan and Bella.",
+        "image": "https://media.discordapp.net/attachments/1339586632181092386/1339586686086156348/b5ac8b0c-62f4-4a7e-9101-656d7265d941.jpg?ex=67af42d2&is=67adf152&hm=64337010ae3414c7761b2db1d25312368e527c9b711a7d71e81caef4ae8ecd6f&=&format=webp&width=945&height=709"
+      },
+      {
+        "title": "Why you're perfect",
+        "text": "1. You are insanely beautiful. OBJECTIVELY.\n2. You are stupidly smart (oxymoron usage to flex my C2 english hehe)\n3. You make me want to do better.\n4. Any mundane activity becomes exciting when you're there\n5. You've already won my mother over \n6. I'm worried the page won't be able to show anymore (there are loads more...)",
+        "image": "https://media.discordapp.net/attachments/1339586632181092386/1339586686086156348/b5ac8b0c-62f4-4a7e-9101-656d7265d941.jpg?ex=67af42d2&is=67adf152&hm=64337010ae3414c7761b2db1d25312368e527c9b711a7d71e81caef4ae8ecd6f&=&format=webp&width=945&height=709"
+      }
+    ];
 
-            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    /********************************************
+     * INITIAL MESSAGE - CHARACTER BY CHARACTER *
+     ********************************************/
+    const initialMessage = "Hi Aigera, will you be my valentine?";
+    const messageContainer = document.getElementById("message-container");
+    const yesButtonsContainer = document.getElementById("yesButtonsContainer");
 
-            document.getElementById('countdown').innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    let charIndex = 0;
+    const initialInterval = setInterval(() => {
+      if (charIndex < initialMessage.length) {
+        const char = initialMessage[charIndex];
+        const span = document.createElement("span");
+        span.textContent = char;
+        span.classList.add("fade-in-char");
+
+        // Add to container
+        messageContainer.appendChild(span);
+
+        // Fade to black after a small delay
+        setTimeout(() => {
+          span.style.color = "#000";
+        }, 200);
+
+        charIndex++;
+      } else {
+        // Entire message displayed
+        clearInterval(initialInterval);
+        yesButtonsContainer.classList.remove("hidden");
+      }
+    }, 100); // Adjust typing speed here
+
+    /***********************
+     * "YES" => SHOW STORIES
+     ***********************/
+    const yesClickHandler = () => {
+      document.getElementById("initial-section").classList.add("hidden");
+      document.getElementById("stories-section").classList.remove("hidden");
+      showStory(currentStoryIndex);
+    };
+
+    document.getElementById("yesButton1").addEventListener("click", yesClickHandler);
+    document.getElementById("yesButton2").addEventListener("click", yesClickHandler);
+
+    /*************************************************************
+     * ANIMATE EACH STORY (TEXT & IMAGE) IN SEQUENCE             *
+     *************************************************************/
+    let currentStoryIndex = 0;
+    let storyTextInterval = null;
+
+    const storyTitleEl = document.getElementById("story-title");
+    const storyTextEl = document.getElementById("story-text");
+    const storyImageEl = document.getElementById("story-image");
+    const playButton = document.getElementById("playButton");
+
+    function showStory(index) {
+      // Hide the play button so user can't skip mid-animation
+      playButton.style.display = "none";
+
+      // Clear existing content
+      storyTitleEl.textContent = "";
+      storyTextEl.textContent = "";
+      storyImageEl.src = "";
+      storyImageEl.style.opacity = "0"; // reset fade-in
+
+      const story = storiesData[index];
+      if (!story) return;
+
+      // Update title
+      storyTitleEl.textContent = story.title;
+
+      // Animate text
+      animateStoryText(story.text, () => {
+        // After text finishes animating, fade in image
+        fadeInStoryImage(story.image);
+      });
+    }
+
+    function animateStoryText(fullText, onComplete) {
+      storyTextEl.innerHTML = ""; // clear old text
+      let i = 0;
+
+      storyTextInterval = setInterval(() => {
+        if (i < fullText.length) {
+          const char = fullText[i];
+          const span = document.createElement("span");
+          span.textContent = char;
+          span.classList.add("fade-in-char");
+
+          storyTextEl.appendChild(span);
+          // Fade to black after a short delay
+          setTimeout(() => {
+            span.style.color = "#000";
+          }, 200);
+
+          i++;
+        } else {
+          clearInterval(storyTextInterval);
+          storyTextInterval = null;
+          if (onComplete) onComplete();
+        }
+      }, 50); // text typing speed
+    }
+
+    function fadeInStoryImage(imageUrl) {
+      storyImageEl.src = imageUrl;
+      // Wait a tiny moment so the DOM sees the src, then fade in
+      requestAnimationFrame(() => {
+        storyImageEl.style.opacity = "1";
+      });
+
+      // After fade-in completes (1.5s, matching CSS), show the play button
+      setTimeout(() => {
+        // Show the "Play Next Story" button
+        playButton.style.display = "block";
+      }, 1500);
+    }
+
+    /*************************************
+     * PLAY BUTTON => NEXT STORY or END  *
+     *************************************/
+    playButton.addEventListener("click", () => {
+      // Hide play button while we proceed
+      playButton.style.display = "none";
+
+      currentStoryIndex++;
+      if (currentStoryIndex < storiesData.length) {
+        // Show the next story
+        showStory(currentStoryIndex);
+      } else {
+        // All stories are finished => Show the countdown
+        document.getElementById("stories-section").classList.add("hidden");
+        document.getElementById("countdown-section").classList.remove("hidden");
+        startCountdown();
+      }
+    });
+
+    /*************************************
+     * COUNTDOWN TO MIDNIGHT (IN RED)    *
+     *************************************/
+    let countdownInterval;
+    function startCountdown() {
+      const countdownElem = document.getElementById("countdown");
+      function updateCountdown() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 0, 0); // next midnight
+
+        let timeDifference = midnight.getTime() - now.getTime();
+
+        if (timeDifference <= 0) {
+          clearInterval(countdownInterval);
+          countdownElem.textContent = "00:00:00 🌹"; 
+          return;
         }
 
-        updateCountdown(); // Run initially to avoid delay
-        const countdownInterval = setInterval(updateCountdown, 1000); // Update every second
-    </script>
+        const hours = Math.floor(
+          (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor(
+          (timeDifference % (1000 * 60)) / 1000
+        );
+
+        countdownElem.textContent =
+          `${hours.toString().padStart(2, '0')}:` +
+          `${minutes.toString().padStart(2, '0')}:` +
+          `${seconds.toString().padStart(2, '0')} 🌹`;
+      }
+
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+    }
+  </script>
 </body>
 </html>
