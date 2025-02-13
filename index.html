@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midnight Reveal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Optional: Add any custom CSS here if needed, but Tailwind should cover most things */
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center h-screen font-sans">
+
+    <div id="countdown-container" class="text-center">
+        <h1 class="text-3xl font-bold mb-4">Countdown to Midnight</h1>
+        <div id="countdown" class="text-5xl font-extrabold text-blue-600"></div>
+    </div>
+
+    <div id="button-container" class="hidden mt-8">
+        <button id="special-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full">
+            🎉 Reveal Special Button! 🎉
+        </button>
+    </div>
+
+    <script>
+        function updateCountdown() {
+            const now = new Date();
+            const midnight = new Date(now);
+            midnight.setHours(24, 0, 0, 0); // Set to next midnight
+
+            let timeDifference = midnight.getTime() - now.getTime();
+
+            if (timeDifference <= 0) {
+                // Midnight has passed, or it is already midnight
+                document.getElementById('countdown-container').classList.add('hidden');
+                document.getElementById('button-container').classList.remove('hidden');
+                clearInterval(countdownInterval); // Stop the countdown
+                document.getElementById('countdown').innerText = "Midnight!"; // Optional: Display "Midnight!"
+                return; // Exit function to prevent negative countdown
+            }
+
+            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        updateCountdown(); // Run initially to avoid delay
+        const countdownInterval = setInterval(updateCountdown, 1000); // Update every second
+    </script>
+</body>
+</html>
