@@ -168,8 +168,8 @@
     submitNameButton.addEventListener('click', () => {
       if (nameInput.value.trim().toLowerCase() === 'aigera') {
         currentPage = 2;
-        showPage(5);
-        initializeThenNow()//initializeImageGame(); // Start the image game
+        showPage(currentPage);
+        initializeImageGame(); // Start the image game
       } else {
         alert('Incorrect name. Try again!');
       }
