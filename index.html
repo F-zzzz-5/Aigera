@@ -76,6 +76,29 @@
             overflow-y: auto; /* Add scroll if content overflows */
         }
     }
+
+    /* Inside your <style> tag*/
+      #speech-bubble-container {
+        position: absolute; /* Key for positioning */
+        z-index: 10;     /* Ensure it's above other elements */
+    }
+
+    #final-message {
+        position: relative; /* For the pseudo-element */
+        display: inline-block; /* Important for sizing */
+    }
+
+    /* Speech bubble triangle (pointing down) */
+    #final-message::after {
+        content: '';
+        position: absolute;
+        bottom: 100%;  /* Position at the bottom of the message box*/
+        left: 50%;
+        margin-left: -10px; /* Half of the triangle width */
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent transparent white transparent; /* Creates the triangle */
+    }
   </style>
 </head>
 
@@ -145,8 +168,8 @@
     submitNameButton.addEventListener('click', () => {
       if (nameInput.value.trim().toLowerCase() === 'aigera') {
         currentPage = 2;
-        showPage(currentPage);
-        initializeImageGame(); // Start the image game
+        showPage(5);
+        initializeThenNow()//initializeImageGame(); // Start the image game
       } else {
         alert('Incorrect name. Try again!');
       }
@@ -359,64 +382,112 @@
             });
         }
 
-    // --- Page 5: Then and Now --- (Add this section *after* the song reveal section)
+// --- Page 5: Then and Now --- (Add this section *after* the song reveal section)
 
-    const thenNowContainer = document.createElement('section'); // Create the section element
-    thenNowContainer.id = 'page-5';
-    thenNowContainer.classList.add('page', 'hidden', 'p-4', 'text-center', 'fade-in');
-    thenNowContainer.innerHTML = `
-        <h1 class="text-2xl font-bold mb-4" id="then-now-title"></h1>
-        <div class="flex justify-center space-x-4 mb-4">
-            <img id="then-image-1" src="" alt="Then Image 1" class="w-48 h-48 object-cover">
-            <img id="then-image-2" src="" alt="Then Image 2" class="w-48 h-48 object-cover">
-        </div>
-        <div class="flex justify-center space-x-4 mb-4 hidden">
-             <img id="now-image-1" src="" alt="Now Image 1" class="w-48 h-48 object-cover">
-            <img id="now-image-2" src="" alt="Now Image 2" class="w-48 h-48 object-cover">
-        </div>
-        <p id="final-message" class="text-lg hidden"></p>
-    `;
-    document.getElementById('page-container').appendChild(thenNowContainer); // Add to the main container
+const thenNowContainer = document.createElement('section'); // Create the section element
+thenNowContainer.id = 'page-5';
+thenNowContainer.classList.add('page', 'hidden', 'p-4', 'text-center', 'fade-in');
+thenNowContainer.innerHTML = `
+    <h1 class="text-2xl font-bold mb-4" id="then-now-title"></h1>
+    <div class="flex justify-center space-x-4 mb-4">
+        <img id="then-image-1" src="" alt="Then Image 1" class="w-48 h-48 object-cover">
+        <img id="then-image-2" src="" alt="Then Image 2" class="w-48 h-48 object-cover">
+    </div>
+    <div class="flex justify-center space-x-4 mb-4 hidden">
+            <img id="now-image-1" src="" alt="Now Image 1" class="w-48 h-48 object-cover">
+        <img id="now-image-2" src="" alt="Now Image 2" class="w-48 h-48 object-cover">
+    </div>
+    <div class="relative" id="speech-bubble-container">
+      <p id="final-message" class="text-lg hidden bg-white p-4 rounded-lg shadow-md"></p>
+    </div>
 
-    const thenNowTitle = document.getElementById('then-now-title');
-    const thenImage1 = document.getElementById('then-image-1');
-    const thenImage2 = document.getElementById('then-image-2');
-    const nowImage1 = document.getElementById('now-image-1');
-    const nowImage2 = document.getElementById('now-image-2');
-    const finalMessage = document.getElementById('final-message');
+`;
+document.getElementById('page-container').appendChild(thenNowContainer); // Add to the main container
 
-    const thenNowData = {
-        thenImages: ["https://media.discordapp.net/attachments/1339586632181092386/1344708813105664030/d3188d8c-4e99-417c-bda5-cc5fbba22b8c.jpg?ex=67c1e52c&is=67c093ac&hm=df9df7f934cf982f0f4b5c6d61dfd70795d77f768d117a9d155ce60cd1f95af6&=&format=webp&width=946&height=709", "https://media.discordapp.net/attachments/1339586632181092386/1344708813487603773/IMG_2365.png?ex=67c1e52c&is=67c093ac&hm=58c237a006420f6c349d43be8f6f634fe12f83bfb66c1559d2bc85d6c745bb65&=&format=webp&quality=lossless&width=519&height=709"], // Replace with your actual image paths
-        nowImages: ["https://media.discordapp.net/attachments/1339586632181092386/1344718990513016852/image.png?ex=67c1eea7&is=67c09d27&hm=eb040ae7b5b0efe99d1e2f0690d6ee31f44483aac6a0677735dd01586a84b7ca&=&format=webp&quality=lossless&width=480&height=573", "https://media.discordapp.net/attachments/1339586632181092386/1344709166677229638/IMG_2378.png?ex=67c1e580&is=67c09400&hm=121c2cfbcf6d8de1bcb614eb6ed17edfc976b2734bc10b6a0e9473581e31ee07&=&format=webp&quality=lossless&width=571&height=709"],    // Replace with your actual image paths
-        finalMessage: "No one could ever compare to you."
-    };
-    function initializeThenNow() {
-        //Set Default states
-        thenNowTitle.textContent = "We once were...";
-        thenImage1.src = thenNowData.thenImages[0];
-        thenImage2.src = thenNowData.thenImages[1];
-        thenImage1.parentElement.classList.remove("hidden"); //Correct parent
-        nowImage1.parentElement.classList.add("hidden");
-        finalMessage.classList.add("hidden");
+const thenNowTitle = document.getElementById('then-now-title');
+const thenImage1 = document.getElementById('then-image-1');
+const thenImage2 = document.getElementById('then-image-2');
+const nowImage1 = document.getElementById('now-image-1');
+const nowImage2 = document.getElementById('now-image-2');
+const finalMessage = document.getElementById('final-message');
+const speechBubbleContainer = document.getElementById('speech-bubble-container');
 
+const thenNowData = {
+    thenImages: ["https://media.discordapp.net/attachments/1339586632181092386/1344708813105664030/d3188d8c-4e99-417c-bda5-cc5fbba22b8c.jpg?ex=67c1e52c&is=67c093ac&hm=df9df7f934cf982f0f4b5c6d61dfd70795d77f768d117a9d155ce60cd1f95af6&=&format=webp&width=946&height=709", "https://media.discordapp.net/attachments/1339586632181092386/1344708813487603773/IMG_2365.png?ex=67c1e52c&is=67c093ac&hm=58c237a006420f6c349d43be8f6f634fe12f83bfb66c1559d2bc85d6c745bb65&=&format=webp&quality=lossless&width=519&height=709"], // Replace with your actual image paths
+    nowImages: ["https://media.discordapp.net/attachments/1339586632181092386/1344718990513016852/image.png?ex=67c1eea7&is=67c09d27&hm=eb040ae7b5b0efe99d1e2f0690d6ee31f44483aac6a0677735dd01586a84b7ca&=&format=webp&quality=lossless&width=480&height=573", "https://media.discordapp.net/attachments/1339586632181092386/1344709166677229638/IMG_2378.png?ex=67c1e580&is=67c09400&hm=121c2cfbcf6d8de1bcb614eb6ed17edfc976b2734bc10b6a0e9473581e31ee07&=&format=webp&quality=lossless&width=571&height=709"],    // Replace with your actual image paths
+    finalMessage: "No one could ever compare to you Aigera <3"
+};
+function initializeThenNow() {
+    // Set Default states
+    thenNowTitle.textContent = "We once were...";
+    thenImage1.src = thenNowData.thenImages[0];
+    thenImage2.src = thenNowData.thenImages[1];
+    thenImage1.parentElement.classList.remove("hidden");
+    thenImage2.parentElement.classList.remove("hidden"); // Show both "then" images
+    nowImage1.parentElement.classList.add("hidden");
+    finalMessage.classList.add("hidden");
+    speechBubbleContainer.classList.add("hidden");
+
+    setTimeout(() => {
+        thenNowTitle.textContent = "Now we are...";
+        thenImage1.parentElement.classList.add("hidden");
+        thenImage2.parentElement.classList.add("hidden"); // Hide both "then" images
+        nowImage1.parentElement.classList.remove("hidden");
+        nowImage1.src = thenNowData.nowImages[0];
+        nowImage2.src = thenNowData.nowImages[1];
 
         setTimeout(() => {
-            thenNowTitle.textContent = "Now we are...";
-            //Hide then images.
-            thenImage1.parentElement.classList.add("hidden"); //Correct parent
+            // --- 1. Hide the *entire* container of the "now" images ---
+            nowImage1.parentElement.classList.add("hidden");
+            thenNowTitle.textContent = ""; // Clear the title text
 
-            //Show now images.
-            nowImage1.parentElement.classList.remove("hidden"); //Correct parent
-            nowImage1.src = thenNowData.nowImages[0];
-            nowImage2.src = thenNowData.nowImages[1];
 
-            setTimeout(() => {
-                finalMessage.textContent = thenNowData.finalMessage;
-                finalMessage.classList.remove('hidden');
-            }, 3000);  // Show message after 3 seconds
+            // --- 2. Create and insert the *new* "then" image (you) ---
+            const newThenImage = document.createElement('img');
+            newThenImage.src = thenNowData.thenImages[0];
+            newThenImage.alt = "Then Image 1 (Repeat)";
+            newThenImage.classList.add('w-48', 'h-48', 'object-cover', 'mx-auto');
 
-        }, 4000); // Change images and title after 4 seconds
+            // Insert *before* the speech bubble container:
+            speechBubbleContainer.before(newThenImage);
+
+            // --- 3. Show the message and speech bubble ---
+            finalMessage.textContent = thenNowData.finalMessage;
+            finalMessage.classList.remove('hidden');
+            speechBubbleContainer.classList.remove('hidden');
+
+            // --- 4. Position the speech bubble AFTER the image loads ---
+            newThenImage.onload = () => {
+                positionSpeechBubble(newThenImage);
+            };
+
+        }, 4000);
+    }, 4000);
+}
+
+
+function positionSpeechBubble(image) { // Takes the image element as input
+  const imageRect = image.getBoundingClientRect();
+  speechBubbleContainer.style.left = `${imageRect.left + window.scrollX + imageRect.width / 2 - speechBubbleContainer.offsetWidth / 2}px`;
+  speechBubbleContainer.style.top = `${imageRect.bottom + window.scrollY + 10}px`;
+}
+ // Update position on resize
+ window.addEventListener('resize', () => {
+    // Check if we're on page 5 AND the final message is visible
+    if (currentPage === 5 && !finalMessage.classList.contains('hidden')) {
+      const image = document.querySelector("#page-5 img.mx-auto");
+        if(image){
+            positionSpeechBubble(image);
+        }
     }
+});
+
+    // --- Modify nextSongsButton click handler ---
+nextSongsButton.addEventListener('click', () => { //nextSongButton defined in other js code
+    currentPage = 5;
+    showPage(currentPage);
+    initializeThenNow(); // Call this when the "Then and Now" page is shown
+});
 
 
         // --- Modify nextSongsButton click handler ---
