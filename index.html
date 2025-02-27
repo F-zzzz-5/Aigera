@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>You</title>
+  <title>Valentine's Game</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     .fade-in {
@@ -55,6 +55,26 @@
     .song-block.revealed {
       opacity: 1;
       pointer-events: none;
+    }
+
+    /* Modal adjustments for mobile */
+    @media (max-width: 640px) { /* sm breakpoint in Tailwind */
+        #image-modal .bg-white {
+            max-width: 80%; /* Adjust as needed */
+            max-height: 80vh; /* Limit height as well */
+            overflow-y: auto; /* Add scroll if content overflows */
+        }
+        #modal-image{
+            max-height: 40vh;
+        }
+    }
+
+    @media (max-width: 400px){
+        #image-modal .bg-white {
+            max-width: 95%; /* Adjust as needed */
+            max-height: 95vh; /* Limit height as well */
+            overflow-y: auto; /* Add scroll if content overflows */
+        }
     }
   </style>
 </head>
@@ -307,7 +327,7 @@
 
 
         const songsData = [
-            { title: "The first song that reminded me of you", embed: '<iframe style="border-radius:12px" src="<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/4eWQlBRaTjPPUlzacqEeoQ?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' },
+            { title: "The first song that reminded me of you", embed: '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/4eWQlBRaTjPPUlzacqEeoQ?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' },
             { title: "A song for us", embed: '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1ayO4rgvMNhRIxArrQGz39?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' }, //youtube example
             { title: "Another song that reminds me of you", embed: '<iframe width="560" height="315" src="https://www.youtube.com/embed/Ph54wQG8ynk?si=bUNOU97z_KzF2ZcJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' }, //youtube example
 
@@ -375,7 +395,7 @@
     const thenNowData = {
         thenImages: ["https://media.discordapp.net/attachments/1339586632181092386/1344708813105664030/d3188d8c-4e99-417c-bda5-cc5fbba22b8c.jpg?ex=67c1e52c&is=67c093ac&hm=df9df7f934cf982f0f4b5c6d61dfd70795d77f768d117a9d155ce60cd1f95af6&=&format=webp&width=946&height=709", "https://media.discordapp.net/attachments/1339586632181092386/1344708813487603773/IMG_2365.png?ex=67c1e52c&is=67c093ac&hm=58c237a006420f6c349d43be8f6f634fe12f83bfb66c1559d2bc85d6c745bb65&=&format=webp&quality=lossless&width=519&height=709"], // Replace with your actual image paths
         nowImages: ["https://media.discordapp.net/attachments/1339586632181092386/1344709234134356082/image.png?ex=67c1e590&is=67c09410&hm=e5c5c59b039df2a7f0d7d34ce6477c154c33331866edd862d1104c4ff9c6dfc4&=&format=webp&quality=lossless&width=411&height=489", "https://media.discordapp.net/attachments/1339586632181092386/1344709166677229638/IMG_2378.png?ex=67c1e580&is=67c09400&hm=121c2cfbcf6d8de1bcb614eb6ed17edfc976b2734bc10b6a0e9473581e31ee07&=&format=webp&quality=lossless&width=571&height=709"],    // Replace with your actual image paths
-        finalMessage: "You ARE special. Now smile my kazakh princess, I want you to be happy."
+        finalMessage: "You ARE special. Now smile my kazakh lady, I want you to be happy."
     };
     function initializeThenNow() {
         //Set Default states
@@ -400,7 +420,6 @@
             setTimeout(() => {
                 finalMessage.textContent = thenNowData.finalMessage;
                 finalMessage.classList.remove('hidden');
-                finalMessage.classList.add('fade-in'); // Apply fade-in for the message as well
             }, 3000);  // Show message after 3 seconds
 
         }, 4000); // Change images and title after 4 seconds
