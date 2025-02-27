@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Valentine's Game</title>
+  <title>You.</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     .fade-in {
@@ -323,48 +323,41 @@
         const songContainer = document.getElementById('song-container');
         const nextSongsButton = document.getElementById('next-songs');
         let revealedSongs = 0;
-        let currentAudio = null; // To manage audio playback
-
+        // let currentAudio = null;  // No longer needed for Spotify embeds
 
         const songsData = [
             { title: "The first song that reminded me of you", embed: '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/4eWQlBRaTjPPUlzacqEeoQ?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' },
-            { title: "A song for us", embed: '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1ayO4rgvMNhRIxArrQGz39?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' }, //youtube example
-            { title: "Another song that reminds me of you", embed: '<iframe width="560" height="315" src="https://www.youtube.com/embed/Ph54wQG8ynk?si=bUNOU97z_KzF2ZcJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' }, //youtube example
-
-            // Add more songs as needed
+            { title: "A song for us", embed: '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1ayO4rgvMNhRIxArrQGz39?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' },
         ];
 
-
         function initializeSongReveal() {
-		  revealedSongs = 0;
-          nextSongsButton.classList.add('hidden');
-          songContainer.innerHTML = '';
+            revealedSongs = 0;
+            nextSongsButton.classList.add('hidden');
+            songContainer.innerHTML = '';
 
-          songsData.forEach((song, index) => {
-            const block = document.createElement('div');
-            block.classList.add('song-block');
-            block.textContent = song.title;
-			block.dataset.index = index;
+            songsData.forEach((song, index) => {
+                const block = document.createElement('div');
+                block.classList.add('song-block');
+                block.textContent = song.title; // Initially show the title
+                block.dataset.index = index;
 
-            block.addEventListener('click', () => {
-                if (!block.classList.contains('revealed'))
-				{
-                  block.classList.add('revealed');
-                  revealedSongs++;
-				  const embedCode = song.embed.replace('autoplay', 'autoplay=1'); //allows autoplay
-                  block.innerHTML = embedCode;
+                block.addEventListener('click', () => {
+                    if (!block.classList.contains('revealed')) {
+                        block.classList.add('revealed');
+                        revealedSongs++;
 
+                        // Directly set the innerHTML to the embed code.
+                        block.innerHTML = song.embed;
 
-                  if (revealedSongs === songsData.length) {
-                    nextSongsButton.classList.remove('hidden');
-                  }
-                }
+                        if (revealedSongs === songsData.length) {
+                            nextSongsButton.classList.remove('hidden');
+                        }
+                    }
+                });
+
+                songContainer.appendChild(block);
             });
-
-            songContainer.appendChild(block);
-
-        });
-    }
+        }
 
     // --- Page 5: Then and Now --- (Add this section *after* the song reveal section)
 
@@ -408,7 +401,7 @@
 
 
         setTimeout(() => {
-            thenNowTitle.textContent = "We are now";
+            thenNowTitle.textContent = "Now we are...";
             //Hide then images.
             thenImage1.parentElement.classList.add("hidden"); //Correct parent
 
