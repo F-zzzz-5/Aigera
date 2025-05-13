@@ -1,4 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Nothing here now ... -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Countdown to June 13, 2025</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes colorFade {
+      0% { color: #f97316; }
+      50% { color: #3b82f6; }
+      100% { color: #f97316; }
+    }
+    .color-tween {
+      animation: colorFade 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center">
+  <div class="text-center">
+    <h1 class="text-4xl md:text-6xl font-bold color-tween mb-4 transition-all duration-1000">
+      Countdown to June 13, 2025
+    </h1>
+    <p id="countdown" class="text-3xl md:text-5xl font-mono color-tween transition-all duration-1000"></p>
+  </div>
+
+  <script>
+    const countdownEl = document.getElementById('countdown');
+    const targetDate = new Date('2025-06-13T00:00:00');
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        countdownEl.textContent = 'The day has arrived!';
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownEl.textContent = `
+        ${days}d ${hours}h ${minutes}m ${seconds}s
+      `;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
 </html>
