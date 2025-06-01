@@ -2,11 +2,11 @@
 <html lang="en" class="h-full select-none">
 <head>
 <meta charset="utf-8">
-<title>Surprise</title>
+<title>Hehe hello</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script> -->
 <style>
 html,body,#map{height:100%;margin:0}
 .fade{transition:opacity 1s ease}
@@ -28,14 +28,16 @@ html,body,#map{height:100%;margin:0}
 <div id="map-wrapper" class="absolute inset-0" style="opacity:0">
   <div id="map"></div>
 </div>
-<div id="intro" class="fixed inset-0 z-40 hidden flex items-center justify-center text-3xl text-center font-bold px-6 fade">
-  happy 5 months to the sweetest, most beautiful, most perfect woman in the world.
+<div id="intro" class="fixed inset-0 z-40 hidden flex items-center justify-center px-6 fade">
+  <p class="text-3xl font-bold text-center break-words max-w-[90%]">
+    happy 5 months to the sweetest, most beautiful, most perfect woman in the world.
+  </p>
 </div>
+
 <div id="loader" class="fixed inset-0 z-40 hidden flex flex-col items-center justify-center gap-4 fade">
   <div class="h-16 w-16 animate-spin rounded-full border-4 border-gray-500 border-t-transparent"></div>
   <div class="text-lg tracking-wide">Tracking Travis' iPhone...</div>
 </div>
-<canvas id="overlay"></canvas>
 <script>
 window.addEventListener('load',()=>{
   const LAT=50.091523303829646
@@ -45,13 +47,14 @@ window.addEventListener('load',()=>{
   const fadeIn=el=>{el.classList.remove('hidden');el.style.opacity=1}
   const fadeOut=el=>{el.style.opacity=0;setTimeout(()=>el.classList.add('hidden'),1000)}
   function hearts(){
-    const conf=confetti.create(q('overlay'),{resize:true,useWorker:true})
+    return
+    /*const conf=confetti.create(q('overlay'),{resize:true,useWorker:true})
     const end=Date.now()+3500
     ;(function loop(){
       conf({particleCount:14,emojis:['❤️'],emojiSize:42,gravity:0.7,origin:{x:Math.random(),y:Math.random()-0.2},ticks:200})
       if(Date.now()<end)requestAnimationFrame(loop)
       else{q('overlay').style.opacity=0;setTimeout(()=>q('overlay').remove(),2000)}
-    })()
+    })()*/
   }
   function add3d(map){
     const idx=map.getStyle().layers.findIndex(l=>l.type==='symbol'&&l.layout['text-field'])
@@ -68,7 +71,7 @@ window.addEventListener('load',()=>{
     map.once('idle',()=>{
       fadeOut(q('loader'))
       q('map-wrapper').style.opacity=1
-      hearts()
+      //hearts()
       map.flyTo({center:coords,zoom:18,pitch:60,bearing:20,essential:true,speed:0.6,curve:1.6})
     })
     fadeIn(q('intro'))
