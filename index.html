@@ -1,90 +1,154 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full select-none">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Hehe hello</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js" defer></script>
-<!--<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script> -->
-<style>
-html,body,#map{height:100%;margin:0}
-.fade{transition:opacity 1s ease}
-#overlay{position:fixed;inset:0;pointer-events:none;background:#000;opacity:1;z-index:50;transition:opacity 2s ease}
-.marker-wrapper{pointer-events:none;display:flex;flex-direction:column;align-items:center}
-.dot{position:relative;width:18px;height:18px;border-radius:50%;background:#3b82f6}
-.dot::after{content:"";position:absolute;top:50%;left:50%;width:100%;height:100%;border-radius:50%;background:rgba(59,130,246,.4);transform:translate(-50%,-50%) scale(1);animation:pulse 2s infinite}
-@keyframes pulse{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(4);opacity:0}}
-.label{margin-top:4px;background:rgba(0,0,0,.7);color:#fff;padding:2px 6px;font-size:12px;border-radius:4px;white-space:nowrap}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Aigera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .letter {
+            opacity: 0;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        .fade-out {
+            animation: fadeOut 1s ease-in-out forwards;
+        }
+        .countdown-number {
+            font-variant-numeric: tabular-nums;
+        }
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-black text-white">
-<div id="tokenpanel" class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black fade">
-  <div class="text-xl font-semibold">Enter your token</div>
-  <input id="tokentext" class="w-80 rounded px-3 py-2 text-black" placeholder="token…"/>
-  <button id="tokenbtn" class="rounded bg-blue-600 px-4 py-2">Continue</button>
-  <div id="tokenerror" class="hidden text-sm text-red-400">Please enter a token.</div>
-</div>
-<div id="map-wrapper" class="absolute inset-0" style="opacity:0">
-  <div id="map"></div>
-</div>
-<div id="intro" class="fixed inset-0 z-40 hidden flex items-center justify-center px-6 fade">
-  <p class="text-3xl font-bold text-center break-words max-w-[90%]">
-    happy 5 months to the sweetest, most beautiful, most perfect woman in the world.
-  </p>
-</div>
+<body class="bg-pink-100 min-h-screen flex flex-col items-center justify-center p-8">
+    <div class="max-w-2xl mx-auto text-center">
+        <div id="message-container" class="text-white text-2xl md:text-3xl leading-relaxed mb-8">
+        </div>
+        
+        <div id="countdown-container" class="hidden">
+            <div class="countdown-box rounded-2xl p-6 mb-6 mx-auto max-w-md">
+                <div class="text-white text-lg mb-2 font-medium">Time until Valencia:</div>
+                <div id="countdown" class="countdown-number font-bold text-3xl md:text-4xl text-white"></div>
+            </div>
+            <div class="text-white text-lg md:text-xl mb-6">
+                I will see you then, I love you :-) ❤️
+            </div>
+        </div>
+    </div>
 
-<div id="loader" class="fixed inset-0 z-40 hidden flex flex-col items-center justify-center gap-4 fade">
-  <div class="h-16 w-16 animate-spin rounded-full border-4 border-gray-500 border-t-transparent"></div>
-  <div class="text-lg tracking-wide">Tracking Travis' iPhone...</div>
-</div>
-<script>
-window.addEventListener('load',()=>{
-  const LAT=50.091523303829646
-  const LON=14.453065113518733
-  const coords=[LON,LAT]
-  const q=id=>document.getElementById(id)
-  const fadeIn=el=>{el.classList.remove('hidden');el.style.opacity=1}
-  const fadeOut=el=>{el.style.opacity=0;setTimeout(()=>el.classList.add('hidden'),1000)}
-  function hearts(){
-    return
-    /*const conf=confetti.create(q('overlay'),{resize:true,useWorker:true})
-    const end=Date.now()+3500
-    ;(function loop(){
-      conf({particleCount:14,emojis:['❤️'],emojiSize:42,gravity:0.7,origin:{x:Math.random(),y:Math.random()-0.2},ticks:200})
-      if(Date.now()<end)requestAnimationFrame(loop)
-      else{q('overlay').style.opacity=0;setTimeout(()=>q('overlay').remove(),2000)}
-    })()*/
-  }
-  function add3d(map){
-    const idx=map.getStyle().layers.findIndex(l=>l.type==='symbol'&&l.layout['text-field'])
-    map.addLayer({id:'3d-buildings',source:'composite','source-layer':'building',filter:['==','extrude','true'],type:'fill-extrusion',minzoom:15,paint:{'fill-extrusion-color':'#aaa','fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','min_height'],'fill-extrusion-opacity':0.6}},idx)
-  }
-  function startSequence(token){
-    mapboxgl.accessToken=token
-    const map=new mapboxgl.Map({container:'map',style:'mapbox://styles/mapbox/streets-v12',center:coords,zoom:3,pitch:0,bearing:0,antialias:true})
-    map.on('style.load',()=>add3d(map))
-    const markerWrap=document.createElement('div')
-    markerWrap.className='marker-wrapper'
-    markerWrap.innerHTML='<div class="dot"></div><div class="label">Travis&#39; iPhone</div>'
-    new mapboxgl.Marker(markerWrap,{anchor:'bottom'}).setLngLat(coords).addTo(map)
-    map.once('idle',()=>{
-      fadeOut(q('loader'))
-      q('map-wrapper').style.opacity=1
-      //hearts()
-      map.flyTo({center:coords,zoom:18,pitch:60,bearing:20,essential:true,speed:0.6,curve:1.6})
-    })
-    fadeIn(q('intro'))
-    setTimeout(()=>{fadeOut(q('intro'));fadeIn(q('loader'))},2000)
-  }
-  q('tokenbtn').addEventListener('click',()=>{
-    const tok=q('tokentext').value.trim()
-    if(!tok){q('tokenerror').classList.remove('hidden');return}
-    fadeOut(q('tokenpanel'))
-    setTimeout(()=>q('tokenpanel').remove(),1000)
-    startSequence(tok)
-  })
-})
-</script>
+    <script>
+        const messages = [
+            "Aigera, I know I haven't stuck to my last promise",
+            "but I will show you that this relationship is worth it",
+            "You are to be cherished - you're special, in so many ways",
+            "Please forgive me."
+        ];
+
+        const messageContainer = document.getElementById('message-container');
+        const countdownContainer = document.getElementById('countdown-container');
+        let currentMessageIndex = 0;
+        let currentLetterIndex = 0;
+
+        function typeMessage() {
+            if (currentMessageIndex >= messages.length) {
+                showCountdown();
+                return;
+            }
+
+            const currentMessage = messages[currentMessageIndex];
+            
+            if (currentLetterIndex === 0) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'mb-6';
+                messageDiv.id = `message-${currentMessageIndex}`;
+                messageContainer.appendChild(messageDiv);
+            }
+
+            const messageDiv = document.getElementById(`message-${currentMessageIndex}`);
+            
+            if (currentLetterIndex < currentMessage.length) {
+                const letter = document.createElement('span');
+                letter.textContent = currentMessage[currentLetterIndex];
+                letter.className = 'letter';
+                letter.style.animationDelay = '0s';
+                messageDiv.appendChild(letter);
+                
+                currentLetterIndex++;
+                setTimeout(typeMessage, 80);
+            } else {
+                setTimeout(() => {
+                    messageDiv.classList.add('fade-out');
+                    setTimeout(() => {
+                        messageDiv.remove();
+                    }, 1000);
+                }, 1500);
+                
+                currentMessageIndex++;
+                currentLetterIndex = 0;
+                setTimeout(typeMessage, 2500);
+            }
+        }
+
+        function showCountdown() {
+            setTimeout(() => {
+                countdownContainer.classList.remove('hidden');
+                startCountdown();
+            }, 2000);
+        }
+
+        function playMusic() {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = 'https://www.youtube.com/embed/vZyenjZseXA?autoplay=1&loop=1&playlist=vZyenjZseXA';
+            iframe.allow = 'autoplay';
+            document.body.appendChild(iframe);
+        }
+
+        function startCountdown() {
+            const targetDate = new Date('2025-06-13T19:30:00Z');
+            
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate.getTime() - now;
+                
+                if (distance < 0) {
+                    document.getElementById('countdown').innerHTML = "It's time! ❤️";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown').innerHTML = 
+                    `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        setTimeout(typeMessage, 1000);
+    </script>
 </body>
 </html>
